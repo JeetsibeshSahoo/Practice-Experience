@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
-import bcrypt from "bcryptjs"
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 
 export const createUser = async (req, res) => {
@@ -30,11 +31,14 @@ export const createUser = async (req, res) => {
             age
         });
 
+        console.log("Saved user:", user);
+
         const safeUser = {
             _id : user._id,
             name : user.name,
             email : user.email,
-            age : user.age
+            age : user.age,
+            role : user.role
         };
         
         res.status(201).json({
@@ -82,5 +86,74 @@ export const getAllUsers = async (req, res) => {
         });
     } catch (error) {
         res.status(500).json({ error : error.message });
+    }
+}
+
+export const loginUser = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        if (!email || !password) {
+            return res.status(400).json({
+                success : false,
+                message : "Both of these required"
+            });
+        }
+
+        const user = await User.findOne({ email });
+        if(!user) {
+            return res.status(401).json({
+                success : false,
+                message : "User doesn't exist please register first!"
+            });
+        }
+
+        const checkPasswordMatch = await bcrypt.compare(password, user.password);
+        if(!checkPasswordMatch) {
+            return res.status(401).json({
+                success : false,
+                message : "Incorrect password please try again!"
+            });
+        }
+
+        const token = jwt.sign({
+            id : user._id, email : user.email, role : user.role
+        }, process.env.JWT_SECRET, {expiresIn : "30m"});
+
+        res.cookie("token", token, {httpOnly : true, secure : process.env.NODE_ENV === "production", sameSite : "strict"});
+
+        return res.status(200).json({
+            success : true,
+            message : "Successfully Logged In",
+            user : {
+                id : user._id,
+                name : user.name,
+                email : user.email,
+                age : user.age,
+                role : user.role
+            }
+        });
+
+    } catch (error) {
+        console.log("Error:", error.message);
+        res.status(500).json({
+            success : false,
+            message : "Server Error!"
+        });
+    }
+}
+
+export const logoutUser = (req, res) => {
+    try {
+        res.clearCookie("token");
+        res.json({
+            success : true,
+            message : "Logged out successfully"
+        });
+    } catch (error) {
+        console.log("Error:", error.message);
+        res.status(500).json({
+            success : false,
+            message : "Server Error!"
+        });
     }
 }
