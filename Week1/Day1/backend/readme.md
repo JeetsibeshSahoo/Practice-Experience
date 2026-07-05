@@ -55,3 +55,20 @@
 
 ## One line answer
 #### “Using httpOnly cookies + sameSite + secure makes authentication much safer compared to storing tokens in localStorage.”
+
+// const token = jwt.sign({
+        //     id : user._id, email : user.email, role : user.role
+        // }, process.env.JWT_SECRET, {expiresIn : "30m"});
+
+        // res.cookie("token", token, {httpOnly : true, secure : process.env.NODE_ENV === "production", sameSite : "strict"});
+        // const accessToken = jwt.sign(
+        //     {id : user._id, email : user.email, role : user.role},
+        //     process.env.JWT_SECRET,
+        //     { expiresIn : "15m"}
+        // );
+
+        // const refreshToken = jwt.sign(
+        //     {id : user._id},
+        //     process.env.JWT_REFRESH_SECRET,
+        //     { expiresIn : "7d"}
+        // );

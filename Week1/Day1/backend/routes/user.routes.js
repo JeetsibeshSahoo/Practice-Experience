@@ -1,5 +1,5 @@
 import express from "express";
-import { createUser, getAllUsers, loginUser, logoutUser } from "../controllers/user.controller.js";
+import { createUser, getAllUsers, loginUser, logoutUser, refreshTokenHandler } from "../controllers/user.controller.js";
 import { authMiddleware, isAdmin } from "../middleware/auth.middleware.js";
 import User from "../models/user.model.js";
 
@@ -23,7 +23,8 @@ router.get("/admin", authMiddleware, isAdmin, (req, res) => {
         message : "Welcome back chief"
     });
 });
-router.post("/logout",authMiddleware, logoutUser);
+router.get("/refresh", refreshTokenHandler);
+router.post("/logout", logoutUser);
 
 
 export default router;

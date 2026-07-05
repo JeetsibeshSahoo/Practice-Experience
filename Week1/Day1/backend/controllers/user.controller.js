@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { generateAccessToken, generateRefreshToken } from "../utils/token.js";
 
 
 export const createUser = async (req, res) => {
@@ -115,11 +116,20 @@ export const loginUser = async (req, res) => {
             });
         }
 
-        const token = jwt.sign({
-            id : user._id, email : user.email, role : user.role
-        }, process.env.JWT_SECRET, {expiresIn : "30m"});
+        const accessToken = generateAccessToken(user);
+        const refreshToken = generateRefreshToken(user);
 
-        res.cookie("token", token, {httpOnly : true, secure : process.env.NODE_ENV === "production", sameSite : "strict"});
+        res.cookie("accessToken", accessToken, {
+            httpOnly : true, 
+            secure : process.env.NODE_ENV === "production", 
+            sameSite : "strict"
+        });
+
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly : true, 
+            secure : process.env.NODE_ENV === "production", 
+            sameSite : "strict"
+        });
 
         return res.status(200).json({
             success : true,
@@ -142,9 +152,61 @@ export const loginUser = async (req, res) => {
     }
 }
 
+export const refreshTokenHandler = (req, res) => {
+    try {
+        const token = req.cookies.refreshToken;
+    
+        if(!token) {
+            return res.status(401).json({
+                success : false,
+                message : "No refresh token"
+            });
+        }
+    
+        const decoded = jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+    
+        const newAccessToken = jwt.sign(
+            {id : decoded.id, email : decoded.email, role : decoded.role},
+            process.env.JWT_SECRET,
+            {expiresIn : "15m"}
+        );
+    
+        res.cookie("accessToken", newAccessToken, {
+            httpOnly : true, 
+            secure : process.env.NODE_ENV === "production", 
+            sameSite : "strict"
+        });
+
+        res.json({
+            success : true,
+            message : "Token refreshed"
+        });
+    } catch (error) {
+        console.log("Error:", error.message);
+        return res.status(401).json({
+            success : false,
+            message : "Invalid refresh token"
+        });
+    }
+}
+
 export const logoutUser = (req, res) => {
     try {
-        res.clearCookie("token", {
+        const accessToken = req.cookies.accessToken;
+        const refreshToken = req.cookies.refreshToken;
+
+        if (!accessToken && !refreshToken) {
+            return res.status(401).json({
+                success: false,
+                message: "User not logged in"
+            });
+        }
+        res.clearCookie("accessToken", {
+            httpOnly : true,
+            secure : process.env.NODE_ENV === "production",
+            sameSite : "strict"
+        });
+        res.clearCookie("refreshToken", {
             httpOnly : true,
             secure : process.env.NODE_ENV === "production",
             sameSite : "strict"
