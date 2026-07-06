@@ -2,6 +2,8 @@ import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { generateAccessToken, generateRefreshToken } from "../utils/token.js";
+import { cookieOptions } from "../utils/cookieOpt.js";
+import crypto from "crypto";
 
 
 export const createUser = async (req, res) => {
@@ -119,17 +121,17 @@ export const loginUser = async (req, res) => {
         const accessToken = generateAccessToken(user);
         const refreshToken = generateRefreshToken(user);
 
-        res.cookie("accessToken", accessToken, {
-            httpOnly : true, 
-            secure : process.env.NODE_ENV === "production", 
-            sameSite : "strict"
-        });
+        const hashedToken = crypto
+            .createHash("sha256")
+            .update(refreshToken)
+            .digest("hex");
 
-        res.cookie("refreshToken", refreshToken, {
-            httpOnly : true, 
-            secure : process.env.NODE_ENV === "production", 
-            sameSite : "strict"
-        });
+        user.refreshTokens.push({ token : hashedToken });
+        await user.save();
+
+        res.cookie("accessToken", accessToken, cookieOptions);
+
+        res.cookie("refreshToken", refreshToken, cookieOptions);
 
         return res.status(200).json({
             success : true,
@@ -152,7 +154,7 @@ export const loginUser = async (req, res) => {
     }
 }
 
-export const refreshTokenHandler = (req, res) => {
+export const refreshTokenHandler = async (req, res) => {
     try {
         const token = req.cookies.refreshToken;
     
@@ -160,6 +162,22 @@ export const refreshTokenHandler = (req, res) => {
             return res.status(401).json({
                 success : false,
                 message : "No refresh token"
+            });
+        }
+
+        const hashedToken = crypto
+            .createHash("sha256")
+            .update(token)
+            .digest("hex");
+
+        const user = await User.findOne({
+            "refreshTokens.token" : hashedToken
+        });
+
+        if(!user) {
+            return res.status(403).json({
+                success : false,
+                message : "Invalid refresh token"
             });
         }
     
@@ -171,13 +189,9 @@ export const refreshTokenHandler = (req, res) => {
             {expiresIn : "15m"}
         );
     
-        res.cookie("accessToken", newAccessToken, {
-            httpOnly : true, 
-            secure : process.env.NODE_ENV === "production", 
-            sameSite : "strict"
-        });
+        res.cookie("accessToken", newAccessToken, cookieOptions);
 
-        res.json({
+        return res.json({
             success : true,
             message : "Token refreshed"
         });
@@ -190,30 +204,62 @@ export const refreshTokenHandler = (req, res) => {
     }
 }
 
-export const logoutUser = (req, res) => {
+export const logoutUser = async (req, res) => {
     try {
-        const accessToken = req.cookies.accessToken;
         const refreshToken = req.cookies.refreshToken;
 
-        if (!accessToken && !refreshToken) {
+        if (!refreshToken) {
             return res.status(401).json({
                 success: false,
                 message: "User not logged in"
             });
         }
-        res.clearCookie("accessToken", {
-            httpOnly : true,
-            secure : process.env.NODE_ENV === "production",
-            sameSite : "strict"
-        });
-        res.clearCookie("refreshToken", {
-            httpOnly : true,
-            secure : process.env.NODE_ENV === "production",
-            sameSite : "strict"
-        });
+
+        const hashedToken = crypto
+            .createHash("sha256")
+            .update(refreshToken)
+            .digest("hex");
+
+        const result = await User.updateOne(
+            { "refreshTokens.token" : hashedToken },
+            { $pull : { refreshTokens: { token : hashedToken } } } 
+        );
+
+        if(result.modifiedCount === 0) {
+            return res.status(403).json({
+                success: false,
+                message: "Invalid or already logged out"
+            });
+        }
+
+        res.clearCookie("accessToken", cookieOptions);
+        res.clearCookie("refreshToken", cookieOptions);
         res.json({
             success : true,
-            message : "Logged out successfully"
+            message : "Logged out from this device"
+        });
+    } catch (error) {
+        console.log("Error:", error.message);
+        res.status(500).json({
+            success : false,
+            message : "Server Error!"
+        });
+    }
+}
+
+export const logoutAllDevices = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        await User.findByIdAndUpdate(userId, {
+            refreshTokens : []
+        });
+
+        res.clearCookie("accessToken", cookieOptions);
+        res.clearCookie("refreshToken", cookieOptions);
+        res.json({
+            success : true,
+            message : "Logged out from all devices"
         });
     } catch (error) {
         console.log("Error:", error.message);

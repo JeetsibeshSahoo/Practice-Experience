@@ -1,5 +1,5 @@
 import express from "express";
-import { createUser, getAllUsers, loginUser, logoutUser, refreshTokenHandler } from "../controllers/user.controller.js";
+import { createUser, getAllUsers, loginUser, logoutAllDevices, logoutUser, refreshTokenHandler } from "../controllers/user.controller.js";
 import { authMiddleware, isAdmin } from "../middleware/auth.middleware.js";
 import User from "../models/user.model.js";
 
@@ -25,6 +25,7 @@ router.get("/admin", authMiddleware, isAdmin, (req, res) => {
 });
 router.get("/refresh", refreshTokenHandler);
 router.post("/logout", logoutUser);
+router.post("/logout-all", authMiddleware, logoutAllDevices);
 
 
 export default router;

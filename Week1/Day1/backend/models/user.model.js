@@ -22,7 +22,16 @@ const userSchema = new mongoose.Schema({
     age : {
         type : Number,
         required : true
-    }
+    },
+    refreshTokens : [
+        {
+            token : String,
+            createdAt : {
+                type : Date,
+                default : Date.now
+            }
+        }
+    ]
 }, {timestamps : true});
 
 const User = mongoose.model("User", userSchema);

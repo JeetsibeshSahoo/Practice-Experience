@@ -56,6 +56,18 @@
 ## One line answer
 #### “Using httpOnly cookies + sameSite + secure makes authentication much safer compared to storing tokens in localStorage.”
 
+## 7. Why not use authMiddleware in logout?
+#### Because authMiddleware depends on accessToken, and if it's expired the user won't be able to logout. So logout should rely on token presence, not token validity.
+
+## 8. How do you handle multiple sessions?
+#### I store refresh tokens in the database. Each device has a unique token. On logout, I remove a specific token for single-device logout or clear all tokens for global logout.
+## 9. How do you implement logout for multiple devices?
+#### I store refresh tokens in the database. For single logout, I remove the current token using $pull. For global logout, I clear all tokens from the user document.
+## 10. How do you handle logout securely?
+#### I store refresh tokens in the database. For single logout, I remove the specific token using $pull and validate the result. For global logout, I clear all tokens using user ID from auth middleware.
+## 11. How do you secure refresh tokens?
+#### I hash refresh tokens before storing them in the database using SHA-256, so even if the database is compromised, tokens cannot be reused.
+
 // const token = jwt.sign({
         //     id : user._id, email : user.email, role : user.role
         // }, process.env.JWT_SECRET, {expiresIn : "30m"});
