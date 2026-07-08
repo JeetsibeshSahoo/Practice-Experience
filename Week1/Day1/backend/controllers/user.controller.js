@@ -6,11 +6,11 @@ import { cookieOptions } from "../utils/cookieOpt.js";
 import crypto from "crypto";
 
 
-export const createUser = async (req, res) => {
+export const createUser = async (req, res, next) => {
     try {
         const {name, email, password, age} = req.body;
 
-        if (!name || !email || !password) {
+        if (!name || !email || !password || !age) {
             return res.status(400).json({
                 success : false,
                 message : "All Data required"
@@ -50,13 +50,12 @@ export const createUser = async (req, res) => {
             data : safeUser
         });
     } catch (error) {
-        res.status(500).json({ error : error.message });
+        next(error);
     }
 }
 
-export const getAllUsers = async (req, res) => {
+export const getAllUsers = async (req, res, next) => {
     try {
-        // const users = await User.find();
 
         const { search = "", page= 1, limit = 5 } = req.query;
 
@@ -88,11 +87,11 @@ export const getAllUsers = async (req, res) => {
             data : users
         });
     } catch (error) {
-        res.status(500).json({ error : error.message });
+        next(error);
     }
 }
 
-export const loginUser = async (req, res) => {
+export const loginUser = async (req, res, next) => {
     try {
         const { email, password } = req.body;
         if (!email || !password) {
@@ -126,6 +125,10 @@ export const loginUser = async (req, res) => {
             .update(refreshToken)
             .digest("hex");
 
+        if(user.refreshTokens.length >= 5) {
+            user.refreshTokens.shift();
+        }
+
         user.refreshTokens.push({ token : hashedToken });
         await user.save();
 
@@ -146,11 +149,7 @@ export const loginUser = async (req, res) => {
         });
 
     } catch (error) {
-        console.log("Error:", error.message);
-        res.status(500).json({
-            success : false,
-            message : "Server Error!"
-        });
+        next(error);
     }
 }
 
@@ -204,7 +203,7 @@ export const refreshTokenHandler = async (req, res) => {
     }
 }
 
-export const logoutUser = async (req, res) => {
+export const logoutUser = async (req, res, next) => {
     try {
         const refreshToken = req.cookies.refreshToken;
 
@@ -234,20 +233,16 @@ export const logoutUser = async (req, res) => {
 
         res.clearCookie("accessToken", cookieOptions);
         res.clearCookie("refreshToken", cookieOptions);
-        res.json({
+        return res.json({
             success : true,
             message : "Logged out from this device"
         });
     } catch (error) {
-        console.log("Error:", error.message);
-        res.status(500).json({
-            success : false,
-            message : "Server Error!"
-        });
+        next(error);
     }
 }
 
-export const logoutAllDevices = async (req, res) => {
+export const logoutAllDevices = async (req, res, next) => {
     try {
         const userId = req.user.id;
 
@@ -262,10 +257,6 @@ export const logoutAllDevices = async (req, res) => {
             message : "Logged out from all devices"
         });
     } catch (error) {
-        console.log("Error:", error.message);
-        res.status(500).json({
-            success : false,
-            message : "Server Error!"
-        });
+        next(error);
     }
 }

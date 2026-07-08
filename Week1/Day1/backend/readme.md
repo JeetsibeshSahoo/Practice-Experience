@@ -67,6 +67,16 @@
 #### I store refresh tokens in the database. For single logout, I remove the specific token using $pull and validate the result. For global logout, I clear all tokens using user ID from auth middleware.
 ## 11. How do you secure refresh tokens?
 #### I hash refresh tokens before storing them in the database using SHA-256, so even if the database is compromised, tokens cannot be reused.
+## 12. Explain refresh token flow
+#### It’s a system that lets users stay logged in without asking them to login again and again, while still keeping things secure.
+## 12. Why hash refresh token?
+#### To protect user sessions even if your database gets compromised.
+## 12. Difference between access & refresh token?
+#### . Access Token → used to access APIs
+#### . Refresh Token → used to get a new access token
+## 12. Why cookies instead of localStorage?
+#### Cookies (httpOnly) are safer because JavaScript cannot access them, while localStorage can be easily stolen via XSS.
+
 
 // const token = jwt.sign({
         //     id : user._id, email : user.email, role : user.role

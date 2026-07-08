@@ -23,7 +23,7 @@ router.get("/admin", authMiddleware, isAdmin, (req, res) => {
         message : "Welcome back chief"
     });
 });
-router.get("/refresh", refreshTokenHandler);
+router.post("/refresh", refreshTokenHandler);
 router.post("/logout", logoutUser);
 router.post("/logout-all", authMiddleware, logoutAllDevices);
 
