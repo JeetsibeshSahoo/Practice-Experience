@@ -39,7 +39,7 @@ const Register = () => {
                 Register Here
             </h2>
 
-            <form>
+            <form onSubmit={handleSubmit}>
                 <label className='text-md font-semibold'>Name</label>
                 <input 
                 name='name'
