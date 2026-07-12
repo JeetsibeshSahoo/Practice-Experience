@@ -28,50 +28,53 @@ const Register = () => {
 
         const result = await dispatch(register(formData));
         if(result.meta.requestStatus === "fulfilled") {
-            alert ("Registered Successfully");
             navigate("/login");
         }
     };
 
   return (
-    <div className='min-h-screen flex items-center justify-center bg-gray-100'>
-        <div className='bg-white p-8 rounded-2xl justify-center shadow-md w-full max-w-md'>
-            <h2 className='text-2xl font-bold mb-6 text-center'>
-                Create Account
+    <div className='min-h-screen flex items-center justify-center bg-gradient-to-r from-gray-900'>
+        <div className='bg-gray-200 p-8 rounded-2xl justify-center shadow-lg w-full max-w-md '>
+            <h2 className='text-4xl font-bold mb-6 text-center p-2'>
+                Register Here
             </h2>
 
             <form>
+                <label className='text-md font-semibold'>Name</label>
                 <input 
                 name='name'
                 placeholder='Enter your name...'
                 type="text" 
                 onChange={handleChange}
-                className='w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400'
+                className='w-full p-3 border border-white/20 shadow-lg rounded-lg mb-2'
                 />
+                <label className='text-md font-semibold'>Email</label>
                 <input 
                 name='email'
                 placeholder='Enter your email...'
                 type="email" 
                 onChange={handleChange}
-                className='w-full p-3 border rounded-lg'
+                className='w-full p-3 border border-white/20 rounded-lg shadow-lg mb-2'
                 />
+                <label className='text-md font-semibold'>Password</label>
                 <input 
                 name='password'
                 placeholder='Enter your password...'
                 type="password" 
                 onChange={handleChange}
-                className='w-full p-3 border rounded-lg'
+                className='w-full p-3 border border-white/20 rounded-lg shadow-lg mb-2'
                 />
+                <label className='text-md font-semibold'>Age</label>
                 <input 
                 name='age'
                 placeholder='Enter your age...'
                 type="number" 
                 onChange={handleChange}
-                className='w-full p-3 border rounded-lg'
+                className='w-full p-3 border border-white/20 rounded-lg shadow-lg'
                 />
 
                 <div className='mt-5'>
-                    <button type='submit' className='w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition'>
+                    <button type='submit' className='w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white p-3 rounded-lg hover:scale-95 transition cursor-pointer text-lg'>
                         {isLoading ? "Creating..." : "Register"}
                     </button>
                     {
@@ -83,6 +86,17 @@ const Register = () => {
                     }
                 </div>
             </form>
+
+            <p className="text-center m-3 text-sm">
+                    Already have an account?{" "}
+                    <span
+                        className="text-blue-600 hover:text-blue-800 cursor-pointer"
+                        onClick={() => navigate("/login")}
+                    >
+                        Login
+                    </span>
+                </p>
+
         </div>
     </div>
   )
