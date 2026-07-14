@@ -1,88 +1,105 @@
-import { useState } from "react";
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../features/auth/authSlice";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import { register } from '../features/auth/authSlice';
 
-const Login = () => {
+const Register = () => {
+
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const { isLoading, error } = useSelector((state) => state.auth);
 
     const [formData, setFormData] = useState({
-        email: "",
-        password: ""
+        name : "",
+        email : "",
+        password : "",
+        age : ""
     });
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value
+            [e.target.name] : e.target.value
         });
-    };
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const res = await dispatch(login(formData));
-
-        if (res.meta.requestStatus === "fulfilled") {
-            navigate("/dashboard");
+        const result = await dispatch(register(formData));
+        if(result.meta.requestStatus === "fulfilled") {
+            navigate("/login");
         }
     };
 
-    return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-gray-800">
-            <div className="bg-white/10 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-full max-w-md border border-gray-700">
-                
-                <h2 className="text-3xl font-bold text-center text-white mb-6">
-                    🔐 Welcome Back
-                </h2>
+  return (
+    <div className='min-h-screen flex items-center justify-center bg-gradient-to-r from-gray-900'>
+        <div className='bg-gray-200 p-8 rounded-2xl justify-center shadow-lg w-full max-w-md '>
+            <h2 className='text-4xl font-bold mb-6 text-center p-2'>
+                Register Here
+            </h2>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit}>
+                <label className='text-md font-semibold'>Name</label>
+                <input 
+                name='name'
+                placeholder='Enter your name...'
+                type="text" 
+                onChange={handleChange}
+                className='w-full p-3 border border-white/20 shadow-lg rounded-lg mb-2'
+                />
+                <label className='text-md font-semibold'>Email</label>
+                <input 
+                name='email'
+                placeholder='Enter your email...'
+                type="email" 
+                onChange={handleChange}
+                className='w-full p-3 border border-white/20 rounded-lg shadow-lg mb-2'
+                />
+                <label className='text-md font-semibold'>Password</label>
+                <input 
+                name='password'
+                placeholder='Enter your password...'
+                type="password" 
+                onChange={handleChange}
+                className='w-full p-3 border border-white/20 rounded-lg shadow-lg mb-2'
+                />
+                <label className='text-md font-semibold'>Age</label>
+                <input 
+                name='age'
+                placeholder='Enter your age...'
+                type="number" 
+                onChange={handleChange}
+                className='w-full p-3 border border-white/20 rounded-lg shadow-lg'
+                />
 
-                    <input
-                        name="email"
-                        placeholder="Email"
-                        onChange={handleChange}
-                        className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600"
-                    />
-
-                    <input
-                        name="password"
-                        type="password"
-                        placeholder="Password"
-                        onChange={handleChange}
-                        className="w-full p-3 rounded-lg bg-gray-800 text-white border border-gray-600"
-                    />
-
-                    <div className="space-y-3 mt-4">
-                        <button
-                            type="submit"
-                            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white p-3 rounded-lg"
-                        >
-                            {isLoading ? "Logging in..." : "Login"}
-                        </button>
-
-                        {error && (
-                            <div className="bg-red-500/20 text-red-400 text-sm p-2 rounded text-center">
+                <div className='mt-5'>
+                    <button type='submit' className='w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white p-3 rounded-lg hover:scale-95 transition cursor-pointer text-lg'>
+                        {isLoading ? "Creating..." : "Register"}
+                    </button>
+                    {
+                        error && (
+                            <p className='text-red-500 text-sm mt-4 text-center'>
                                 {error}
-                            </div>
-                        )}
-                    </div>
-                </form>
+                            </p>
+                        )
+                    }
+                </div>
+            </form>
 
-                <p className="text-gray-400 text-sm text-center mt-6">
-                    Don’t have an account?{" "}
+            <p className="text-center m-3 text-sm">
+                    Already have an account?{" "}
                     <span
-                        className="text-purple-400 cursor-pointer"
-                        onClick={() => navigate("/register")}
+                        className="text-blue-600 hover:text-blue-800 cursor-pointer"
+                        onClick={() => navigate("/login")}
                     >
-                        Register
+                        Login
                     </span>
                 </p>
-            </div>
-        </div>
-    );
-};
 
-export default Login;
+        </div>
+    </div>
+  )
+}
+
+export default Register
