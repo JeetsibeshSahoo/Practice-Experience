@@ -47,7 +47,7 @@ export const createUser = async (req, res, next) => {
         res.status(201).json({
             success : true,
             message : "User Creation Successfully",
-            data : safeUser
+            user : safeUser
         });
     } catch (error) {
         next(error);
@@ -84,7 +84,7 @@ export const getAllUsers = async (req, res, next) => {
             limit : limitNumber,
             totalUsers,
             totalPages,
-            data : users
+            user : users
         });
     } catch (error) {
         next(error);

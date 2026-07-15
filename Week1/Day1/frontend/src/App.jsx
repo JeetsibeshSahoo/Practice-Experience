@@ -3,14 +3,23 @@ import Dashboard from "./pages/Dashboard"
 import Register from "./pages/Register"
 import Login from "./pages/Login"
 import ProtectedRoute from "./components/ProtectedRoute"
+import { useDispatch } from "react-redux"
+import { useEffect } from "react"
+import { fetchProfile } from "./features/auth/authSlice"
 
 function App() {
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchProfile());
+  },[]);
 
   return (
     <BrowserRouter>
       <Routes>
         <Route 
-        path="/" 
+        path="/dashboard" 
         element={
           <ProtectedRoute>
             <Dashboard />

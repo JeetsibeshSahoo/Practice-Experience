@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import * as authService from "./authService.js";
 
 const initialState = {
-    user : null,
+    user : {},
     isLoading : false,
     error : null 
 }
@@ -45,32 +45,33 @@ const authSlice = createSlice({
     reducers : {},
     extraReducers : (builder) => {
         builder
-            .addCase(register.pending, (state, action) => {
+            .addCase(register.pending, (state) => {
             state.isLoading = true;
             state.error = null
             }).addCase(register.fulfilled, (state, action) => {
                 state.isLoading = false;
                 state.error = null;
+                state.user = action.payload.user;
             }).addCase(register.rejected, (state, action) => {
                 state.user = null;
                 state.isLoading = false;
                 state.error = action.payload;
-            }).addCase(login.pending, (state, action) => {
+            }).addCase(login.pending, (state) => {
             state.isLoading = true;
             state.error = null;
             }).addCase(login.fulfilled, (state, action) => {
-                state.user = action.payload.success ? action.payload.user : null;
+                state.user = action.payload.user;
                 state.isLoading = false;
                 state.error = null;
             }).addCase(login.rejected, (state, action) => {
                 state.user = null;
                 state.isLoading = false;
                 state.error = action.payload;
-            }).addCase(fetchProfile.pending, (state, action) => {
+            }).addCase(fetchProfile.pending, (state) => {
             state.isLoading = true;
             state.error = null;
             }).addCase(fetchProfile.fulfilled, (state, action) => {
-                state.user = action.payload.success ? action.payload.user : null;
+                state.user = action.payload.user;
                 state.isLoading = false;
                 state.error = null;
             }).addCase(fetchProfile.rejected, (state, action) => {
@@ -79,7 +80,7 @@ const authSlice = createSlice({
                 state.error = action.payload;
             }).addCase(logout.pending, (state) => {
                 state.isLoading = true;
-            }).addCase(logout.fulfilled, (state, action) => {
+            }).addCase(logout.fulfilled, (state) => {
                 state.user = null;
                 state.isLoading = false;
                 state.error = null;
