@@ -43,7 +43,7 @@ const Dashboard = () => {
                         Explore 🚀
                     </button>
 
-                    <button className='px-6 py-2 rounded-full border border-white/20  hover-bg-white/10 transition'>
+                    <button className='px-6 py-2 rounded-full border border-white/20  hover:bg-white/10 transition'>
                         Settings ⚙️
                     </button>
                 </div>
