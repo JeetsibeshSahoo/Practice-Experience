@@ -39,6 +39,14 @@ export const logout = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
     }
 });
 
+export const logoutAll = createAsyncThunk("auth/logout-all", async (_, thunkAPI) => {
+    try {
+        return await authService.logoutAllDevices();
+    } catch (error) {
+        return thunkAPI.rejectWithValue(error.message);
+    }
+});
+
 const authSlice = createSlice({
     name : "auth",
     initialState,
@@ -85,6 +93,15 @@ const authSlice = createSlice({
                 state.isLoading = false;
                 state.error = null;
             }).addCase(logout.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload;
+            }).addCase(logoutAll.pending, (state) => {
+                state.isLoading = true;
+            }).addCase(logoutAll.fulfilled, (state) => {
+                state.user = null;
+                state.isLoading = false;
+                state.error = null;
+            }).addCase(logoutAll.rejected, (state, action) => {
                 state.isLoading = false;
                 state.error = action.payload;
             })

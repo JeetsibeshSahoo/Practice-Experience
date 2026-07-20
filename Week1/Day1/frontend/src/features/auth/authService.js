@@ -36,3 +36,12 @@ export const logoutUser = async() => {
         throw error.response?.data || {message : "Something went wrong"}
     }
 }
+
+export const logoutAllDevices = async() => {
+    try {
+        const response = await axiosInstance.post("/logout-all");
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || {message : "Something went wrong"}
+    }
+}
