@@ -34,7 +34,7 @@ const Dashboard = () => {
 
                     <div className='p-6 rounded-2xl bg-white/5 backdrop-blur-lg border-white/10 hover:scale-105 transition'>
                         <h2 className='text-xl font-semibold mb-2'>🧠 Role</h2>
-                        <p className='text-gray-400'>User</p>
+                        <p className='text-gray-400'>{user?.role}</p>
                     </div>
                 </div>
 

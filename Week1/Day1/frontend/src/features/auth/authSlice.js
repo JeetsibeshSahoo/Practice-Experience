@@ -2,8 +2,9 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import * as authService from "./authService.js";
 
 const initialState = {
-    user : {},
+    user : null,
     isLoading : false,
+    isAuthenticated : false,
     error : null 
 }
 
@@ -80,12 +81,14 @@ const authSlice = createSlice({
             state.error = null;
             }).addCase(fetchProfile.fulfilled, (state, action) => {
                 state.user = action.payload.user;
+                state.isAuthenticated = true;
                 state.isLoading = false;
                 state.error = null;
             }).addCase(fetchProfile.rejected, (state, action) => {
                 state.user = null;
                 state.isLoading = false;
                 state.error = action.payload;
+                state.isAuthenticated = true;
             }).addCase(logout.pending, (state) => {
                 state.isLoading = true;
             }).addCase(logout.fulfilled, (state) => {

@@ -34,9 +34,7 @@ const Sidebar = () => {
             className="h-screen bg-[#0f0f0f] border-r border-white/10 p-3 flex flex-col justify-between"
         >
 
-            {/* TOP */}
             <div>
-                {/* Toggle Button */}
                 <button
                     onClick={() => setIsOpen(!isOpen)}
                     className="mb-6 p-2 hover:bg-white/10 rounded-lg"
@@ -44,7 +42,6 @@ const Sidebar = () => {
                     <Menu />
                 </button>
 
-                {/* Logo */}
                 {isOpen && (
                     <h2 className="text-2xl font-bold mb-10 bg-gradient-to-r from-purple-400 to-pink-500 text-transparent bg-clip-text">
                         🚀 Admin
@@ -86,10 +83,8 @@ const Sidebar = () => {
                 </nav>
             </div>
 
-            {/* BOTTOM */}
             <div className="space-y-4">
 
-                {/* USER INFO */}
                 {isOpen && (
                     <div className="p-3 bg-white/5 rounded-xl border border-white/10">
                         <p className="text-sm font-semibold">{user?.name || "User"}</p>
@@ -97,7 +92,6 @@ const Sidebar = () => {
                     </div>
                 )}
 
-                {/* LOGOUT */}
                 <button
                     onClick={handleLogout}
                     className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-400 hover:bg-red-500/20 transition"
