@@ -1,14 +1,18 @@
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { LayoutDashboard, User, Settings, LogOut, Menu } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { menuConfig } from "../config/menuConfig";
+
 
 const Sidebar = () => {
 
-    const [isOpen, setIsOpen] = useState(true);
+    const [isOpen, setIsOpen] = useState(() => {
+        return localStorage.getItem("sidebar") !== "closed"
+    });
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { user } = useSelector((state) => state.auth);
@@ -18,6 +22,10 @@ const Sidebar = () => {
             navigate("/login");
         });
     };
+
+    const filteredMenu = user
+  ? menuConfig.filter((item) => item.roles.includes(user.role))
+  : [];
 
     const menuItemClass =
         "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300";
@@ -36,7 +44,10 @@ const Sidebar = () => {
 
             <div>
                 <button
-                    onClick={() => setIsOpen(!isOpen)}
+                    onClick={() => {
+                        setIsOpen(!isOpen);
+                        localStorage.setItem("sidebar", !isOpen ? "open" : "closed");
+                    }}
                     className="mb-6 p-2 hover:bg-white/10 rounded-lg"
                 >
                     <Menu />
@@ -44,42 +55,27 @@ const Sidebar = () => {
 
                 {isOpen && (
                     <h2 className="text-2xl font-bold mb-10 bg-gradient-to-r from-purple-400 to-pink-500 text-transparent bg-clip-text">
-                        🚀 Admin
+                        Admin
                     </h2>
                 )}
 
                 <nav className="space-y-2">
+                    {
+                        filterMenu.map((item, idx) => {
+                            const Icon = item.icon;
 
-                    <NavLink
-                        to="/dashboard"
-                        className={({ isActive }) =>
-                            `${menuItemClass} ${isActive ? activeClass : inactiveClass}`
-                        }
-                    >
-                        <LayoutDashboard size={20} />
-                        {isOpen && "Dashboard"}
-                    </NavLink>
-
-                    <NavLink
-                        to="/profile"
-                        className={({ isActive }) =>
-                            `${menuItemClass} ${isActive ? activeClass : inactiveClass}`
-                        }
-                    >
-                        <User size={20} />
-                        {isOpen && "Profile"}
-                    </NavLink>
-
-                    <NavLink
-                        to="/settings"
-                        className={({ isActive }) =>
-                            `${menuItemClass} ${isActive ? activeClass : inactiveClass}`
-                        }
-                    >
-                        <Settings size={20} />
-                        {isOpen && "Settings"}
-                    </NavLink>
-
+                            return (
+                                <NavLink
+                                key={idx}
+                                to={item.path}
+                                className={({ isActive }) => `${menuItemClass} ${isActive ? activeClass : inactiveClass}`}
+                                >
+                                    <Icon size={20}/>
+                                    {isOpen && item.name}
+                                </NavLink>
+                            );
+                        })
+                    }
                 </nav>
             </div>
 
