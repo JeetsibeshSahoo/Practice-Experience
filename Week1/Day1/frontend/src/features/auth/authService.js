@@ -1,4 +1,4 @@
-import { axiosInstance } from "../../utils/axiosInstance"
+import { axiosInstance } from "../../utils/axiosInstance.js"
 
 
 export const registerUser = async(data) => {
@@ -28,6 +28,15 @@ export const getProfile = async() => {
     }
 }
 
+export const getAllUsers = async (params) => {
+    try {
+        const response = await axiosInstance.get("/users", { params });
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || { message: "Something went wrong" }
+    }
+};
+
 export const logoutUser = async() => {
     try {
         const response = await axiosInstance.post("/logout");
@@ -40,6 +49,15 @@ export const logoutUser = async() => {
 export const logoutAllDevices = async() => {
     try {
         const response = await axiosInstance.post("/logout-all");
+        return response.data;
+    } catch (error) {
+        throw error.response?.data || {message : "Something went wrong"}
+    }
+}
+
+export const deleteUser = async(id) => {
+    try {
+        const response = await axiosInstance.delete(`/users/${id}`);
         return response.data;
     } catch (error) {
         throw error.response?.data || {message : "Something went wrong"}

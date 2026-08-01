@@ -23,7 +23,7 @@ const Sidebar = () => {
         });
     };
 
-    const filteredMenu = user
+    const filterMenu = user
   ? menuConfig.filter((item) => item.roles.includes(user.role))
   : [];
 

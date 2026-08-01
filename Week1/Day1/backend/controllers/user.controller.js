@@ -80,11 +80,11 @@ export const getAllUsers = async (req, res, next) => {
 
         res.status(200).json({
             success : true,
-            page : pageNumber,
+            currentPage : pageNumber,
             limit : limitNumber,
             totalUsers,
             totalPages,
-            user : users
+            users : users
         });
     } catch (error) {
         next(error);
@@ -256,6 +256,29 @@ export const logoutAllDevices = async (req, res, next) => {
             success : true,
             message : "Logged out from all devices"
         });
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const deleteUser = async(req, res, next) => {
+    try {
+        const { id } = req.params;
+
+        const user = await User.findByIdAndDelete(id);
+
+        if(!user) {
+            return res.status(404).json({
+                success : false,
+                message : "User not found"
+            });
+        }
+
+        return res.status(200).json({
+            success : true,
+            message : "User deleted successfully"
+        });
+
     } catch (error) {
         next(error);
     }
