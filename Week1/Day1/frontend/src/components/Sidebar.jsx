@@ -55,7 +55,7 @@ const Sidebar = () => {
 
                 {isOpen && (
                     <h2 className="text-2xl font-bold mb-10 bg-gradient-to-r from-purple-400 to-pink-500 text-transparent bg-clip-text">
-                        Admin
+                        {user?.role === "admin" ? "Admin Panel" : "User Panel"}
                     </h2>
                 )}
 

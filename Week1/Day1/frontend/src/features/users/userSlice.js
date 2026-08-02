@@ -15,7 +15,7 @@ export const fetchUsers = createAsyncThunk(
         try {
             return await authService.getAllUsers(params);
         } catch (error) {
-            return thunkAPI.rejectWithValue(error.message);
+            return thunkAPI.rejectWithValue(error.response?.data?.message || error.message);
         }
     }
 );
@@ -27,7 +27,7 @@ export const removeUser = createAsyncThunk(
             await authService.deleteUser(id);
             return id;
         } catch (error) {
-            return thunkAPI.rejectWithValue(error.message);
+            return thunkAPI.rejectWithValue(error.response?.data?.message || error.message);
         }
     }
 );
@@ -46,23 +46,23 @@ const userSlice = createSlice({
             state.error = null;
             state.users = action.payload.users;
             state.currentPage = action.payload.currentPage;
-            state.totalPage = action.payload.totalPages;
+            state.totalPages = action.payload.totalPages;
             }).addCase(fetchUsers.rejected, (state, action) => {
-            state.users = null;
+            state.users = [];
             state.isLoading = false;
             state.error = action.payload;
             }).addCase(removeUser.pending, (state) => {
             state.isLoading = true;
             state.error = null
             }).addCase(removeUser.fulfilled, (state, action) => {
-            state.users = state.users.filter(
+                state.isLoading = false;
+                state.users = state.users.filter(
                 (user) => user._id !== action.payload
-            ).addCase(removeUser.rejected, (state, action) => {
-            state.users = null;
-            state.isLoading = false;
-            state.error = action.payload;
-            })
-        });       
+                );
+            }).addCase(removeUser.rejected, (state, action) => {
+                state.isLoading = false;
+                state.error = action.payload;
+            });
     }
 });
 
