@@ -30,13 +30,18 @@ function App() {
           </ProtectedRoute>
         } 
         />
+        
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/profile" element={
+
+        <Route 
+        path="/profile" 
+        element={
           <ProtectedRoute>
             <Profile />
           </ProtectedRoute>
-        } />
+        } 
+        />
 
         <Route path="/settings" element={
           <ProtectedRoute>
