@@ -9,6 +9,7 @@ import { fetchProfile } from "./features/auth/authSlice"
 import Profile from "./pages/Profile"
 import Settings from "./pages/Settings"
 import User from "./pages/User"
+import AdminRoute from "./components/AdminRoute"
 
 function App() {
 
@@ -37,16 +38,16 @@ function App() {
           </ProtectedRoute>
         } />
 
-        <Route path="/setting" element={
+        <Route path="/settings" element={
           <ProtectedRoute>
             <Settings />
           </ProtectedRoute>
         } />
 
         <Route path="/user" element={
-          <ProtectedRoute>
+          <AdminRoute>
             <User />
-          </ProtectedRoute>
+          </AdminRoute>
         } />
       </Routes>
     </BrowserRouter>

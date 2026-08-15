@@ -7,7 +7,7 @@ const AdminRoute = ({ children }) => {
   if (!isInitialized) return <p>Loading...</p>;
 
   if (!isAuthenticated || user?.role !== "admin") {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/dashboard" replace />;
   }
 
   return children;

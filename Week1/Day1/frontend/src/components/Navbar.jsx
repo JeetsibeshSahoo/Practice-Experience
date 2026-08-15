@@ -1,14 +1,9 @@
 import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from "react-router-dom";
-import { logout } from "../features/auth/authSlice.js";
+import { useSelector } from 'react-redux';
 
 const Navbar = () => {
 
     const { user } = useSelector((state) => state.auth);
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-
 
   return (
     <div className='sticky top-0 z-0 backdrop-blur-xl bg-white/5 border-b border-white/10 shadow-lg'>

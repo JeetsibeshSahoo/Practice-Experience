@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, User, Settings, LogOut, Menu } from "lucide-react";
+import { LogOut, Menu } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";

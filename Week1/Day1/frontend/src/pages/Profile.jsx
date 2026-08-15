@@ -8,11 +8,7 @@ const Profile = () => {
   const dispatch = useDispatch();
   const { user, isLoading, error } = useSelector((state) => state.auth)
 
-  useEffect(() => {
-    if(!user) {
-      dispatch(fetchProfile());
-    }
-  },[dispatch, user]);
+  
 
   if(isLoading) return <p>Loading...</p>
   if(error) return <p className='text-red-500'>{error}</p>
